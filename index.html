@@ -3,72 +3,544 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>俺のアニメ絶対評価レビュー</title>
+  <title>ANIME VAULT | 俺のアニメ絶対評価</title>
+  <!-- フォント＆アイコン（FontAwesome / Google Fonts） -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: "Helvetica Neue", Arial, sans-serif; background: #0f0f12; color: #fff; margin: 0; padding: 20px; }
-    header { text-align: center; padding: 40px 0; border-bottom: 1px solid #333; }
-    h1 { font-size: 2rem; color: #ff0055; margin-bottom: 10px; }
-    .pr-notice { text-align: center; font-size: 0.8rem; color: #888; margin-top: 5px; }
-    .container { max-width: 800px; margin: 30px auto; }
-    
-    /* アニメ評価カード */
-    .anime-card { background: #1a1a24; border-radius: 12px; padding: 25px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #2a2a38; }
-    .anime-title { font-size: 1.5rem; margin: 0 0 10px 0; color: #fff; }
-    .rating { color: #ffcc00; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
-    .review-text { line-height: 1.7; color: #ccc; margin-bottom: 20px; white-space: pre-wrap; }
-    
-    /* U-NEXT誘導ボタン */
-    .unext-btn {
-      display: block;
-      width: 100%;
-      text-align: center;
-      background: linear-gradient(45deg, #0084ff, #00d2ff);
-      color: #fff;
-      font-size: 1.1rem;
-      font-weight: bold;
-      padding: 15px 0;
-      border-radius: 8px;
-      text-decoration: none;
-      box-shadow: 0 4px 10px rgba(0, 132, 255, 0.3);
-      transition: transform 0.2s, opacity 0.2s;
+    /* プレミアム・ダークサイバーデザイン */
+    :root {
+      --bg-color: #0b0c10;
+      --card-bg: rgba(22, 27, 38, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --accent-color: #ff0055;
+      --accent-gradient: linear-gradient(135deg, #ff0055 0%, #ff5e00 100%);
+      --unext-blue: #0084ff;
+      --unext-gradient: linear-gradient(135deg, #0084ff 0%, #00d2ff 100%);
+      --star-color: #ffc107;
+      --text-main: #f0f3f8;
+      --text-sub: #a0a8b9;
     }
-    .unext-btn:hover { transform: translateY(-2px); opacity: 0.9; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 0, 85, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 132, 255, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px 80px; }
+
+    /* ヘッダー */
+    header { text-align: center; padding: 60px 20px 40px; }
+    .site-title {
+      font-family: 'Poppins', 'Noto Sans JP', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(45deg, #fff, #a0a8b9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -1px;
+    }
+    .site-title span {
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .site-subtitle { color: var(--text-sub); font-size: 1rem; margin-top: 10px; }
+    .pr-notice {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      border: 1px solid var(--card-border);
+    }
+
+    /* 検索＆フィルターバー */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      padding: 15px 20px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+    .search-box { position: relative; flex: 1; min-width: 250px; }
+    .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
+    .search-box input {
+      width: 100%; padding: 10px 15px 10px 40px;
+      background: rgba(0,0,0,0.3); border: 1px solid var(--card-border);
+      border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; transition: 0.3s;
+    }
+    .search-box input:focus { border-color: var(--unext-blue); box-shadow: 0 0 10px rgba(0,132,255,0.3); }
+    .filter-group { display: flex; gap: 10px; }
+    .filter-btn {
+      background: rgba(0,0,0,0.3); border: 1px solid var(--card-border);
+      color: var(--text-sub); padding: 8px 16px; border-radius: 10px;
+      cursor: pointer; font-size: 0.85rem; transition: 0.3s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--accent-gradient); color: #fff; border-color: transparent; }
+
+    /* アニメグリッド */
+    .anime-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 25px;
+    }
+
+    /* アニメカード */
+    .anime-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex; flex-direction: column;
+      transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s;
+    }
+    .anime-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5), 0 0 20px rgba(255, 0, 85, 0.15);
+      border-color: rgba(255, 0, 85, 0.3);
+    }
+    .poster-wrapper { position: relative; width: 100%; height: 240px; overflow: hidden; }
+    .poster-img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .anime-card:hover .poster-img { transform: scale(1.08); }
+    .poster-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-color) 0%, transparent 100%); }
+    .badge-rating {
+      position: absolute; top: 15px; right: 15px;
+      background: rgba(11, 12, 16, 0.85); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 193, 7, 0.4); color: var(--star-color);
+      padding: 6px 12px; border-radius: 30px; font-weight: 700; font-size: 0.9rem;
+      display: flex; align-items: center; gap: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
+    .card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
+    .card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 12px; line-height: 1.3; color: #fff; }
+    .review-box {
+      background: rgba(0,0,0,0.25); border-left: 3px solid var(--accent-color);
+      padding: 12px; border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #d1d5db;
+      line-height: 1.6; margin-bottom: 20px; flex-grow: 1; white-space: pre-wrap;
+    }
+
+    /* U-NEXTボタン */
+    .unext-link {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; padding: 14px; background: var(--unext-gradient); color: #fff;
+      font-weight: 700; font-size: 0.95rem; text-decoration: none; border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 132, 255, 0.3); transition: all 0.3s ease;
+    }
+    .unext-link:hover { box-shadow: 0 6px 20px rgba(0, 132, 255, 0.6); transform: scale(1.02); }
+
+    /* 管理者編集コントロール */
+    .admin-card-actions { display: none; gap: 8px; margin-top: 10px; }
+    body.is-admin .admin-card-actions { display: flex; }
+    .btn-edit, .btn-delete { flex: 1; padding: 6px; border-radius: 6px; border: none; font-size: 0.8rem; cursor: pointer; font-weight: bold; }
+    .btn-edit { background: #3b82f6; color: white; }
+    .btn-delete { background: #ef4444; color: white; }
+
+    footer { text-align: center; padding: 40px 0; color: var(--text-sub); font-size: 0.85rem; }
+    .admin-toggle-btn { background: transparent; border: none; color: #4b5563; cursor: pointer; margin-top: 10px; font-size: 0.8rem; }
+    .admin-toggle-btn:hover { color: var(--accent-color); }
+
+    /* モーダル */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+      display: none; justify-content: center; align-items: center; z-index: 1000; padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-content {
+      background: #161b26; border: 1px solid var(--card-border); border-radius: 20px;
+      width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 30px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--card-border); padding-bottom: 15px; }
+    .modal-title { font-size: 1.4rem; font-weight: 700; color: #fff; }
+    .close-btn { background: none; border: none; color: var(--text-sub); font-size: 1.5rem; cursor: pointer; }
+
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-size: 0.9rem; color: var(--text-sub); font-weight: 600; }
+    .form-control {
+      width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.4);
+      border: 1px solid var(--card-border); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none;
+    }
+    .form-control:focus { border-color: var(--accent-color); }
+
+    /* API検索結果一覧 */
+    .api-search-results {
+      max-height: 200px; overflow-y: auto; background: #0f131d;
+      border: 1px solid var(--card-border); border-radius: 10px; margin-top: 8px; display: none;
+    }
+    .api-item { display: flex; align-items: center; gap: 12px; padding: 10px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
+    .api-item:hover { background: rgba(255,0,85,0.15); }
+    .api-item img { width: 40px; height: 55px; object-fit: cover; border-radius: 4px; }
+    .api-item-title { font-size: 0.9rem; font-weight: 600; color: #fff; }
+
+    .btn-submit {
+      width: 100%; padding: 14px; background: var(--accent-gradient); color: white;
+      border: none; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer;
+    }
+
+    .github-sync-box {
+      background: rgba(255,255,255,0.03); padding: 15px; border-radius: 12px; margin-top: 20px; border: 1px dashed var(--card-border);
+    }
+    .github-sync-box p { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1>俺のアニメ絶対評価ライブラリ</h1>
-    <p>俺の独断と偏見で評価！面白い作品だけを厳選紹介</p>
-    <!-- ステマ規制対策（アフィリエイトリンクを貼る場合に必須） -->
-    <div class="pr-notice">※本ページはプロモーションが含まれています</div>
-  </header>
-
   <div class="container">
+    <header>
+      <h1 class="site-title">ANIME <span>VAULT</span></h1>
+      <p class="site-subtitle">俺の独断と偏見で選ぶ！アニメ絶対評価ライブラリ</p>
+      <div class="pr-notice"><i class="fa-solid fa-circle-info"></i> 当サイトはプロモーション（アフィリエイト）を含みます</div>
+    </header>
 
-    <!-- 作品1 -->
-    <div class="anime-card">
-      <h2 class="anime-title">作品名：チェンソーマン</h2>
-      <div class="rating">俺の評価： ★★★★★ (5.0 / 5.0)</div>
-      <p class="review-text">【感想】作画と演出が映画レベル。ストーリー展開もテンポが良くて一気に観られる。神作。</p>
-      <!-- ここに自分のU-NEXTアフィリエイトURLを入れる -->
-      <a href="ここにU-NEXTのアフィリエイトリンク" target="_blank" rel="noopener noreferrer" class="unext-btn">
-        ▶ U-NEXTで「チェンソーマン」を31日間無料で観る
-      </a>
+    <div class="controls-bar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="評価した作品を検索..." oninput="filterAnime()">
+      </div>
+      <div class="filter-group">
+        <button class="filter-btn active" onclick="setFilter('all', this)">すべて</button>
+        <button class="filter-btn" onclick="setFilter('5', this)">★5.0のみ</button>
+        <button class="filter-btn" onclick="setFilter('4', this)">★4.0以上</button>
+      </div>
+      <button id="addAnimeBtn" class="filter-btn" style="display:none; background: var(--accent-gradient); color:#fff;" onclick="openAddModal()">
+        <i class="fa-solid fa-plus"></i> 作品を追加
+      </button>
     </div>
 
-    <!-- 作品2 -->
-    <div class="anime-card">
-      <h2 class="anime-title">作品名：〇〇〇〇</h2>
-      <div class="rating">俺の評価： ★★★★☆ (4.0 / 5.0)</div>
-      <p class="review-text">【感想】〇〇のシーンが熱い。後半の怒涛の伏線回収が見どころ。</p>
-      <a href="ここにU-NEXTのアフィリエイトリンク" target="_blank" rel="noopener noreferrer" class="unext-btn">
-        ▶ U-NEXTで観てみる（31日間無料体験）
-      </a>
-    </div>
+    <div class="anime-grid" id="animeGrid"></div>
 
+    <footer>
+      <p>&copy; ANIME VAULT - My Personal Anime Ratings</p>
+      <button class="admin-toggle-btn" onclick="toggleAdminPrompt()">
+        <i class="fa-solid fa-lock"></i> <span id="adminBtnText">管理者ログイン</span>
+      </button>
+    </footer>
   </div>
 
+  <!-- 管理者用 モーダル -->
+  <div class="modal-overlay" id="animeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modalHeaderTitle">アニメ作品を評価・追加</h2>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+
+      <!-- アニメ名検索 (API連携) -->
+      <div class="form-group">
+        <label><i class="fa-solid fa-magnifying-glass"></i> アニメ名で自動検索（選ぶと画像・タイトルが自動入力）</label>
+        <input type="text" id="apiSearchInput" class="form-control" placeholder="例: フリーレン, 鬼滅の刃, 呪術廻戦..." oninput="searchAnimeAPI()">
+        <div class="api-search-results" id="apiSearchResults"></div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid var(--card-border); margin: 20px 0;">
+
+      <input type="hidden" id="editIndex" value="-1">
+
+      <div class="form-group">
+        <label>作品タイトル</label>
+        <input type="text" id="inputTitle" class="form-control" required placeholder="アニメのタイトル">
+      </div>
+
+      <div class="form-group">
+        <label>カバー画像URL (ポスター画像)</label>
+        <input type="text" id="inputImage" class="form-control" placeholder="https://...">
+      </div>
+
+      <div class="form-group">
+        <label>俺の評価 (0.0 〜 5.0)</label>
+        <input type="number" id="inputRating" class="form-control" min="0" max="5" step="0.1" value="5.0">
+      </div>
+
+      <div class="form-group">
+        <label>レビュー・感想コメント</label>
+        <textarea id="inputReview" class="form-control" rows="4" placeholder="作画、ストーリー、キャラについての感想..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>U-NEXT アフィリエイトリンクURL</label>
+        <input type="text" id="inputUnextLink" class="form-control" placeholder="ここに自分のU-NEXTアフィリエイトURLを入れる">
+      </div>
+
+      <button class="btn-submit" onclick="saveAnime()"><i class="fa-solid fa-floppy-disk"></i> ローカル保存</button>
+
+      <!-- GitHub API 1クリック自動更新 -->
+      <div class="github-sync-box">
+        <p><i class="fa-brands fa-github"></i> <strong>GitHub自動更新設定</strong> (一回設定すると、Webサイト全体に即反映できます)</p>
+        <input type="password" id="githubToken" class="form-control" placeholder="GitHub Personal Access Token" style="font-size:0.8rem; margin-bottom:8px;">
+        <input type="text" id="githubRepo" class="form-control" placeholder="ユーザー名/リポジトリ名 (例: myuser/anime-site)" style="font-size:0.8rem; margin-bottom:8px;">
+        <button class="btn-edit" style="width:100%; padding:8px;" onclick="syncToGitHub()"><i class="fa-solid fa-cloud-arrow-up"></i> GitHubを自動更新（全員に見えるように保存）</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 初期データ
+    const initialData = [
+      {
+        title: "チェンソーマン",
+        image: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg",
+        rating: 5.0,
+        review: "作画と演出が映画レベル。悪魔とのバトルと不穏な空気感が最高。アニメ好きなら絶対に一度は観ておくべき傑作。",
+        unext: "https://www.video.unext.jp/"
+      },
+      {
+        title: "呪術廻戦",
+        image: "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
+        rating: 4.8,
+        review: "バトルシーンのテンポとクオリティが超圧倒的。五条悟の格好良さだけでも観る価値アリ。",
+        unext: "https://www.video.unext.jp/"
+      }
+    ];
+
+    let animeList = JSON.parse(localStorage.getItem('animeVaultData')) || initialData;
+    let isAdmin = localStorage.getItem('animeVaultIsAdmin') === 'true';
+    let currentFilter = 'all';
+
+    window.onload = () => {
+      if(isAdmin) document.body.classList.add('is-admin');
+      updateAdminUI();
+      renderAnimeGrid();
+      if(localStorage.getItem('ghToken')) document.getElementById('githubToken').value = localStorage.getItem('ghToken');
+      if(localStorage.getItem('ghRepo')) document.getElementById('githubRepo').value = localStorage.getItem('ghRepo');
+    };
+
+    function renderAnimeGrid() {
+      const grid = document.getElementById('animeGrid');
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      grid.innerHTML = '';
+
+      const filtered = animeList.filter(item => {
+        const matchesSearch = item.title.toLowerCase().includes(search) || item.review.toLowerCase().includes(search);
+        let matchesFilter = true;
+        if(currentFilter === '5') matchesFilter = item.rating >= 5.0;
+        if(currentFilter === '4') matchesFilter = item.rating >= 4.0;
+        return matchesSearch && matchesFilter;
+      });
+
+      if(filtered.length === 0) {
+        grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-sub); padding:50px 0;">作品が見つかりません</div>`;
+        return;
+      }
+
+      filtered.forEach((item) => {
+        const originalIndex = animeList.indexOf(item);
+        const card = document.createElement('div');
+        card.className = 'anime-card';
+
+        card.innerHTML = `
+          <div class="poster-wrapper">
+            <img class="poster-img" src="${item.image || 'https://via.placeholder.com/400x300?text=No+Image'}" alt="${item.title}" loading="lazy">
+            <div class="poster-overlay"></div>
+            <div class="badge-rating"><i class="fa-solid fa-star"></i> ${parseFloat(item.rating).toFixed(1)}</div>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">${item.title}</h3>
+            <div class="review-box">${item.review}</div>
+            <a href="${item.unext || '#'}" target="_blank" rel="noopener noreferrer" class="unext-link">
+              <i class="fa-solid fa-play"></i> U-NEXTで「${item.title}」を観る
+            </a>
+            <div class="admin-card-actions">
+              <button class="btn-edit" onclick="openEditModal(${originalIndex})"><i class="fa-solid fa-pen"></i> 編集</button>
+              <button class="btn-delete" onclick="deleteAnime(${originalIndex})"><i class="fa-solid fa-trash"></i> 削除</button>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterAnime() { renderAnimeGrid(); }
+    function setFilter(type, btn) {
+      currentFilter = type;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderAnimeGrid();
+    }
+
+    // パスワード認証 (初期値: admin123)
+    function toggleAdminPrompt() {
+      if(isAdmin) {
+        if(confirm("管理者モードをログアウトしますか？")) {
+          isAdmin = false;
+          localStorage.setItem('animeVaultIsAdmin', 'false');
+          document.body.classList.remove('is-admin');
+          updateAdminUI();
+        }
+      } else {
+        const pwd = prompt("管理者パスワードを入力してください (初期パスワード: admin123)");
+        if(pwd === "admin123") {
+          isAdmin = true;
+          localStorage.setItem('animeVaultIsAdmin', 'true');
+          document.body.classList.add('is-admin');
+          updateAdminUI();
+          alert("管理者ログインに成功しました！");
+        } else if(pwd !== null) {
+          alert("パスワードが違います");
+        }
+      }
+    }
+
+    function updateAdminUI() {
+      document.getElementById('adminBtnText').innerText = isAdmin ? "ログアウト (管理者)" : "管理者ログイン";
+      document.getElementById('addAnimeBtn').style.display = isAdmin ? "block" : "none";
+      renderAnimeGrid();
+    }
+
+    function openAddModal() {
+      document.getElementById('modalHeaderTitle').innerText = "アニメ作品を追加・評価";
+      document.getElementById('editIndex').value = "-1";
+      document.getElementById('inputTitle').value = "";
+      document.getElementById('inputImage').value = "";
+      document.getElementById('inputRating').value = "5.0";
+      document.getElementById('inputReview').value = "";
+      document.getElementById('inputUnextLink').value = "";
+      document.getElementById('animeModal').classList.add('active');
+    }
+
+    function openEditModal(index) {
+      const item = animeList[index];
+      document.getElementById('modalHeaderTitle').innerText = "評価を修正";
+      document.getElementById('editIndex').value = index;
+      document.getElementById('inputTitle').value = item.title;
+      document.getElementById('inputImage').value = item.image;
+      document.getElementById('inputRating').value = item.rating;
+      document.getElementById('inputReview').value = item.review;
+      document.getElementById('inputUnextLink').value = item.unext;
+      document.getElementById('animeModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('animeModal').classList.remove('active');
+      document.getElementById('apiSearchResults').style.display = 'none';
+    }
+
+    function saveAnime() {
+      const index = parseInt(document.getElementById('editIndex').value);
+      const title = document.getElementById('inputTitle').value.trim();
+      const image = document.getElementById('inputImage').value.trim();
+      const rating = parseFloat(document.getElementById('inputRating').value);
+      const review = document.getElementById('inputReview').value.trim();
+      const unext = document.getElementById('inputUnextLink').value.trim();
+
+      if(!title) { alert("タイトルを入力してください"); return; }
+
+      const newItem = { title, image, rating, review, unext };
+
+      if(index >= 0) {
+        animeList[index] = newItem;
+      } else {
+        animeList.unshift(newItem);
+      }
+
+      localStorage.setItem('animeVaultData', JSON.stringify(animeList));
+      renderAnimeGrid();
+      closeModal();
+    }
+
+    function deleteAnime(index) {
+      if(confirm(`「${animeList[index].title}」を削除してもよろしいですか？`)) {
+        animeList.splice(index, 1);
+        localStorage.setItem('animeVaultData', JSON.stringify(animeList));
+        renderAnimeGrid();
+      }
+    }
+
+    // アニメ検索API (Jikan API)
+    let searchTimeout;
+    function searchAnimeAPI() {
+      clearTimeout(searchTimeout);
+      const query = document.getElementById('apiSearchInput').value.trim();
+      const resultsDiv = document.getElementById('apiSearchResults');
+
+      if(query.length < 2) {
+        resultsDiv.style.display = 'none';
+        return;
+      }
+
+      searchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(query)}&limit=5`);
+          const data = await res.json();
+          if(data.data && data.data.length > 0) {
+            resultsDiv.innerHTML = data.data.map(a => `
+              <div class="api-item" onclick="selectApiAnime('${a.title_japanese || a.title}', '${a.images.jpg.image_url}', \`${(a.synopsis || '').replace(/[\n\r"]/g, ' ')}\`)">
+                <img src="${a.images.jpg.image_url}" alt="">
+                <div>
+                  <div class="api-item-title">${a.title_japanese || a.title}</div>
+                  <div style="font-size:0.75rem; color:var(--text-sub);">${a.year || ''} / ★${a.score || 'N/A'}</div>
+                </div>
+              </div>
+            `).join('');
+            resultsDiv.style.display = 'block';
+          }
+        } catch(e) { console.error(e); }
+      }, 400);
+    }
+
+    function selectApiAnime(title, image, synopsis) {
+      document.getElementById('inputTitle').value = title;
+      document.getElementById('inputImage').value = image;
+      if(!document.getElementById('inputReview').value) {
+        document.getElementById('inputReview').value = `【あらすじ】\n${synopsis.substring(0, 100)}...\n\n【感想】\n`;
+      }
+      document.getElementById('apiSearchResults').style.display = 'none';
+    }
+
+    // GitHubへ直接保存（自動反映）
+    async function syncToGitHub() {
+      const token = document.getElementById('githubToken').value.trim();
+      const repo = document.getElementById('githubRepo').value.trim();
+
+      if(!token || !repo) {
+        alert("GitHub Tokenとリポジトリ名を入力してください");
+        return;
+      }
+
+      localStorage.setItem('ghToken', token);
+      localStorage.setItem('ghRepo', repo);
+
+      try {
+        let fullHtml = document.documentElement.outerHTML;
+        const dataStr = JSON.stringify(animeList, null, 2);
+        fullHtml = fullHtml.replace(/const initialData = \[[\s\S]*?\];/, `const initialData = ${dataStr};`);
+
+        const getUrl = `https://api.github.com/repos/${repo}/contents/index.html`;
+        const getRes = await fetch(getUrl, { headers: { 'Authorization': `token ${token}` } });
+        if(!getRes.ok) throw new Error("GitHub情報の取得に失敗しました");
+        const fileData = await getRes.json();
+
+        const putRes = await fetch(getUrl, {
+          method: 'PUT',
+          headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: "Update anime database",
+            content: btoa(unescape(encodeURIComponent("<!DOCTYPE html>\n<html lang=\"ja\">\n" + fullHtml + "\n</html>"))),
+            sha: fileData.sha
+          })
+        });
+
+        if(putRes.ok) alert("🎉 GitHubへの自動保存に成功しました！1〜2分後に本番サイトへ反映されます。");
+        else alert("保存に失敗しました");
+      } catch(e) { alert("エラー: " + e.message); }
+    }
+  </script>
 </body>
 </html>
