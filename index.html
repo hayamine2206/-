@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
+<html lang="ja"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ANIME VAULT | 俺のアニメ絶対評価</title>
   <!-- フォント＆アイコン（FontAwesome / Google Fonts） -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&amp;family=Poppins:wght@600;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -201,7 +201,7 @@
     .github-sync-box p { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 10px; }
   </style>
 </head>
-<body>
+<body class="is-admin">
 
   <div class="container">
     <header>
@@ -220,34 +220,85 @@
         <button class="filter-btn" onclick="setFilter('5', this)">★5.0のみ</button>
         <button class="filter-btn" onclick="setFilter('4', this)">★4.0以上</button>
       </div>
-      <button id="addAnimeBtn" class="filter-btn" style="display:none; background: var(--accent-gradient); color:#fff;" onclick="openAddModal()">
+      <button id="addAnimeBtn" class="filter-btn" style="display: block; background: var(--accent-gradient); color: rgb(255, 255, 255);" onclick="openAddModal()">
         <i class="fa-solid fa-plus"></i> 作品を追加
       </button>
     </div>
 
-    <div class="anime-grid" id="animeGrid"></div>
+    <div class="anime-grid" id="animeGrid"><div class="anime-card">
+          <div class="poster-wrapper">
+            <img class="poster-img" src="https://via.placeholder.com/400x300?text=No+Image" alt="アイシールド21" loading="lazy">
+            <div class="poster-overlay"></div>
+            <div class="badge-rating"><i class="fa-solid fa-star"></i> 5.0</div>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">アイシールド21</h3>
+            <div class="review-box">蛭魔しか勝たん</div>
+            <a href="https://www.video.unext.jp/" target="_blank" rel="noopener noreferrer" class="unext-link">
+              <i class="fa-solid fa-play"></i> U-NEXTで「アイシールド21」を観る
+            </a>
+            <div class="admin-card-actions">
+              <button class="btn-edit" onclick="openEditModal(0)"><i class="fa-solid fa-pen"></i> 編集</button>
+              <button class="btn-delete" onclick="deleteAnime(0)"><i class="fa-solid fa-trash"></i> 削除</button>
+            </div>
+          </div>
+        </div><div class="anime-card">
+          <div class="poster-wrapper">
+            <img class="poster-img" src="https://cdn.myanimelist.net/images/anime/1806/126216.jpg" alt="チェンソーマン" loading="lazy">
+            <div class="poster-overlay"></div>
+            <div class="badge-rating"><i class="fa-solid fa-star"></i> 5.0</div>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">チェンソーマン</h3>
+            <div class="review-box">作画と演出が映画レベル。悪魔とのバトルと不穏な空気感が最高。アニメ好きなら絶対に一度は観ておくべき傑作。</div>
+            <a href="https://www.video.unext.jp/" target="_blank" rel="noopener noreferrer" class="unext-link">
+              <i class="fa-solid fa-play"></i> U-NEXTで「チェンソーマン」を観る
+            </a>
+            <div class="admin-card-actions">
+              <button class="btn-edit" onclick="openEditModal(1)"><i class="fa-solid fa-pen"></i> 編集</button>
+              <button class="btn-delete" onclick="deleteAnime(1)"><i class="fa-solid fa-trash"></i> 削除</button>
+            </div>
+          </div>
+        </div><div class="anime-card">
+          <div class="poster-wrapper">
+            <img class="poster-img" src="https://cdn.myanimelist.net/images/anime/1171/109222.jpg" alt="呪術廻戦" loading="lazy">
+            <div class="poster-overlay"></div>
+            <div class="badge-rating"><i class="fa-solid fa-star"></i> 4.8</div>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">呪術廻戦</h3>
+            <div class="review-box">バトルシーンのテンポとクオリティが超圧倒的。五条悟の格好良さだけでも観る価値アリ。</div>
+            <a href="https://www.video.unext.jp/" target="_blank" rel="noopener noreferrer" class="unext-link">
+              <i class="fa-solid fa-play"></i> U-NEXTで「呪術廻戦」を観る
+            </a>
+            <div class="admin-card-actions">
+              <button class="btn-edit" onclick="openEditModal(2)"><i class="fa-solid fa-pen"></i> 編集</button>
+              <button class="btn-delete" onclick="deleteAnime(2)"><i class="fa-solid fa-trash"></i> 削除</button>
+            </div>
+          </div>
+        </div></div>
 
     <footer>
-      <p>&copy; ANIME VAULT - My Personal Anime Ratings</p>
+      <p>© ANIME VAULT - My Personal Anime Ratings</p>
       <button class="admin-toggle-btn" onclick="toggleAdminPrompt()">
-        <i class="fa-solid fa-lock"></i> <span id="adminBtnText">管理者ログイン</span>
+        <i class="fa-solid fa-lock"></i> <span id="adminBtnText">ログアウト (管理者)</span>
       </button>
     </footer>
   </div>
 
   <!-- 管理者用 モーダル -->
-  <div class="modal-overlay" id="animeModal">
+  <div class="modal-overlay active" id="animeModal">
     <div class="modal-content">
       <div class="modal-header">
-        <h2 class="modal-title" id="modalHeaderTitle">アニメ作品を評価・追加</h2>
-        <button class="close-btn" onclick="closeModal()">&times;</button>
+        <h2 class="modal-title" id="modalHeaderTitle">アニメ作品を追加・評価</h2>
+        <button class="close-btn" onclick="closeModal()">×</button>
       </div>
 
       <!-- アニメ名検索 (API連携) -->
       <div class="form-group">
         <label><i class="fa-solid fa-magnifying-glass"></i> アニメ名で自動検索（選ぶと画像・タイトルが自動入力）</label>
         <input type="text" id="apiSearchInput" class="form-control" placeholder="例: フリーレン, 鬼滅の刃, 呪術廻戦..." oninput="searchAnimeAPI()">
-        <div class="api-search-results" id="apiSearchResults"></div>
+        <div class="api-search-results" id="apiSearchResults" style="display: none;"></div>
       </div>
 
       <hr style="border: 0; border-top: 1px solid var(--card-border); margin: 20px 0;">
@@ -256,7 +307,7 @@
 
       <div class="form-group">
         <label>作品タイトル</label>
-        <input type="text" id="inputTitle" class="form-control" required placeholder="アニメのタイトル">
+        <input type="text" id="inputTitle" class="form-control" required="" placeholder="アニメのタイトル">
       </div>
 
       <div class="form-group">
@@ -294,21 +345,28 @@
   <script>
     // 初期データ
     const initialData = [
-      {
-        title: "チェンソーマン",
-        image: "https://cdn.myanimelist.net/images/anime/1806/126216.jpg",
-        rating: 5.0,
-        review: "作画と演出が映画レベル。悪魔とのバトルと不穏な空気感が最高。アニメ好きなら絶対に一度は観ておくべき傑作。",
-        unext: "https://www.video.unext.jp/"
-      },
-      {
-        title: "呪術廻戦",
-        image: "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
-        rating: 4.8,
-        review: "バトルシーンのテンポとクオリティが超圧倒的。五条悟の格好良さだけでも観る価値アリ。",
-        unext: "https://www.video.unext.jp/"
-      }
-    ];
+  {
+    "title": "アイシールド21",
+    "image": "",
+    "rating": 5,
+    "review": "蛭魔しか勝たん",
+    "unext": "https://www.video.unext.jp/"
+  },
+  {
+    "title": "チェンソーマン",
+    "image": "https://cdn.myanimelist.net/images/anime/1806/126216.jpg",
+    "rating": 5,
+    "review": "作画と演出が映画レベル。悪魔とのバトルと不穏な空気感が最高。アニメ好きなら絶対に一度は観ておくべき傑作。",
+    "unext": "https://www.video.unext.jp/"
+  },
+  {
+    "title": "呪術廻戦",
+    "image": "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
+    "rating": 4.8,
+    "review": "バトルシーンのテンポとクオリティが超圧倒的。五条悟の格好良さだけでも観る価値アリ。",
+    "unext": "https://www.video.unext.jp/"
+  }
+];
 
     let animeList = JSON.parse(localStorage.getItem('animeVaultData')) || initialData;
     let isAdmin = localStorage.getItem('animeVaultIsAdmin') === 'true';
@@ -542,5 +600,7 @@
       } catch(e) { alert("エラー: " + e.message); }
     }
   </script>
-</body>
+
+
+</body></html>
 </html>
